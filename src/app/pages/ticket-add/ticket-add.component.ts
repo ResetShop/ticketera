@@ -90,7 +90,7 @@ import { AuthenticationService } from '../../providers/authentication.service'
 			</form>
 
 			<button
-				[disabled]="ticketForm.invalid"
+				[disabled]="ticketForm.invalid || isLoading"
 				(click)="onSubmit()"
 				class="mt-5 flex w-full justify-center rounded bg-success px-4 py-2 font-bold text-white drop-shadow hover:bg-success-dark"
 				type="submit"
@@ -104,6 +104,7 @@ import { AuthenticationService } from '../../providers/authentication.service'
 })
 export class TicketAddComponent implements OnInit {
 	ticketForm!: FormGroup;
+	isLoading: boolean = false;
 
 	private formBuilder = inject(FormBuilder);
 	private router = inject(Router);
@@ -120,6 +121,7 @@ export class TicketAddComponent implements OnInit {
 	}
 
 	onSubmit() {
+		this.isLoading = true;
 		if (this.ticketForm?.valid) {
 
 			const user = this.authenticationService.currentUser$.value ?? null;
@@ -149,10 +151,12 @@ export class TicketAddComponent implements OnInit {
 
 			this.ticketService.createTicket(tk).pipe(first()).subscribe({
 				next: (response) => {
+					this.isLoading = false;
 					const createdTicketID = response.id;
 					this.router.navigate([`/ticket-detail/${createdTicketID}`]);
 				},
 				error: (error) => {
+					this.isLoading = false;
 					console.error('Error al crear el ticket', error);
 				}
 			})
