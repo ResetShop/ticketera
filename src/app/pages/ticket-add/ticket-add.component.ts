@@ -92,7 +92,7 @@ import { AuthenticationService } from '../../providers/authentication.service'
 			<button
 				[disabled]="ticketForm.invalid || isLoading"
 				(click)="onSubmit()"
-				class="mt-5 flex w-full justify-center rounded bg-success px-4 py-2 font-bold text-white drop-shadow hover:bg-success-dark"
+				class="mt-5 flex w-full justify-center rounded bg-success px-4 py-2 font-bold text-white drop-shadow hover:bg-success-dark disabled:bg-gray-200"
 				type="submit"
 			>
 				<img class="mr-1 h-5" src="/assets/img/icons/add.svg" alt="" />
