@@ -4,6 +4,7 @@
 	"engines": {
 		"node": ">=20.11.0 <21.0.0"
 	},
+	"type": "module",
 	"scripts": {
 		"preinstall": "npx only-allow pnpm",
 		"postinstall": "pnpm run run-migrations",
@@ -21,7 +22,7 @@
 		"create-migrations": "pnpm drizzle-kit generate:pg",
 		"run-migrations": "pnpm tsx run-migrations.ts",
 		"run-migrations-dev": "pnpm tsx --env-file=.env run-migrations.ts",
-		"config": "node -r ts-node/register --env-file=.env ./scripts/set-environment.ts"
+		"config": "pnpm tsx -r ts-node/register --env-file=.env ./scripts/set-environment.ts"
 	},
 	"private": true,
 	"dependencies": {
