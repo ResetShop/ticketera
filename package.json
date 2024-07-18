@@ -6,8 +6,8 @@
 	},
 	"type": "module",
 	"scripts": {
-		"preinstall": "npx only-allow pnpm",
-		"postinstall": "pnpm run run-migrations",
+		"preinstall": "npx only-allow pnpm && touch .env",
+		"postinstall": "pnpm run config && pnpm run run-migrations",
 		"start": "node dist/ticketera/server/server.mjs",
 		"dev": "concurrently -p --names=\"Build,Server app\" --prefix-colors=\"yellow,green\" \"pnpm run build:watch\" \"pnpm run serve\"\n",
 		"serve": "node -r ts-node/register --watch-path=./dist/ticketera/server --env-file=.env dist/ticketera/server/server.mjs",
@@ -21,7 +21,8 @@
 		"prepare": "husky",
 		"create-migrations": "pnpm drizzle-kit generate:pg",
 		"run-migrations": "pnpm tsx run-migrations.ts",
-		"run-migrations-dev": "pnpm tsx --env-file=.env run-migrations.ts"
+		"run-migrations-dev": "pnpm tsx --env-file=.env run-migrations.ts",
+		"config": "pnpm tsx -r ts-node/register --env-file=.env ./scripts/set-environment.ts"
 	},
 	"private": true,
 	"dependencies": {
