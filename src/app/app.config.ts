@@ -14,7 +14,7 @@ import { LOCALE_ID } from '@angular/core';
 import localeEs from '@angular/common/locales/es-419';
 import { registerLocaleData } from '@angular/common';
 import { provideAuth0 } from '@auth0/auth0-angular';
-import { environment } from '../environments/environment';
+import { environment } from 'src/app/environments/environment';
 registerLocaleData(localeEs);
 
 export const appConfig: ApplicationConfig = {

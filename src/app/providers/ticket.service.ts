@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable, switchMap } from 'rxjs';
 import { Ticket } from '../interfaces/ticket.model';
-import { environment } from '../../environments/environment';
-import { ticket } from 'src/api/schemas/ticket';
+import { environment } from '../environments/environment'
+
 
 @Injectable({
 	providedIn: 'root',

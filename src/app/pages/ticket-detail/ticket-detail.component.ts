@@ -5,7 +5,7 @@ import { TicketService } from 'src/app/providers/ticket.service';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map, Observable, switchMap } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/app/environments/environment';
 import { Ticket } from '../../interfaces/ticket.model';
 
 @Component({
