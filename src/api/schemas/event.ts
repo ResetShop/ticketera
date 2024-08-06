@@ -5,20 +5,20 @@ import { user } from './user'
 
 export const event = pgTable('event', {
     id: serial('id').primaryKey(),
-    name: text('name'),
-    description: text('description'),
-    startDate: timestamp('start_date'),
-    endDate: timestamp('end_date'),
+    name: text('name').notNull(),
+    description: text('description').notNull(),
+    startDate: timestamp('start_date').notNull(),
+    endDate: timestamp('end_date').notNull(),
     altOrganizer: text('alt_organizer'),
     imageUrl: text('imageUrl'),
-    peopleLimit: integer('people_limit'),
-    venueName: text('venue_name'),
-    venueAddress: text('venue_address'),
+    peopleLimit: integer('people_limit').notNull(),
+    venueName: text('venue_name').notNull(),
+    venueAddress: text('venue_address').notNull(),
 
     // Audit fields
     createdBy: serial('created_by').references(() => user.id),
-    createdAt: timestamp('created_at'),
-    updatedAt: timestamp('updated_at'),
-    enabled: boolean('enabled'),
-    deleted: boolean('deleted'),
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at').defaultNow(),
+    enabled: boolean('enabled').default(true),
+    deleted: boolean('deleted').default(false),
 })
