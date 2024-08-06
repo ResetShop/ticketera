@@ -1,5 +1,8 @@
 import { boolean, integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+
+// Schemas
 import { seller } from './seller';
+import { event } from './event';
 
 export const ticket = pgTable('ticket', {
 	id: serial('id').primaryKey(),
@@ -15,4 +18,5 @@ export const ticket = pgTable('ticket', {
 	updatedAt: timestamp('updated_at'),
 	enabled: boolean('enabled'),
 	deleted: boolean('deleted'),
+	idEvent: serial('id_event').references(() => event.id),
 });

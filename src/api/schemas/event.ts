@@ -1,6 +1,7 @@
 import { boolean, integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core'
-import { user } from './user'
 
+// Schemas
+import { user } from './user'
 
 export const event = pgTable('event', {
     id: serial('id').primaryKey(),
@@ -13,6 +14,7 @@ export const event = pgTable('event', {
     peopleLimit: integer('people_limit'),
     venueName: text('venue_name'),
     venueAddress: text('venue_address'),
+
     // Audit fields
     createdBy: serial('created_by').references(() => user.id),
     createdAt: timestamp('created_at'),
