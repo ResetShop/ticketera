@@ -1,7 +1,9 @@
 import { boolean, integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core'
+import { relations } from 'drizzle-orm'
 
 // Schemas
 import { user } from './user'
+import { ticket } from './ticket'
 
 export const events = pgTable('event', {
     id: serial('id').primaryKey(),
@@ -22,3 +24,7 @@ export const events = pgTable('event', {
     enabled: boolean('enabled').default(true),
     deleted: boolean('deleted').default(false),
 })
+
+export const eventRelations = relations(events, ({ many }) => ({
+    tickets: many(ticket),
+}))

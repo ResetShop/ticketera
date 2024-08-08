@@ -2,7 +2,8 @@ import { boolean, integer, pgTable, serial, text, timestamp } from 'drizzle-orm/
 
 // Schemas
 import { seller } from './seller';
-import { event } from './event';
+import { events } from './events';
+import { relations } from 'drizzle-orm'
 
 export const ticket = pgTable('ticket', {
 	id: serial('id').primaryKey(),
@@ -18,5 +19,9 @@ export const ticket = pgTable('ticket', {
 	updatedAt: timestamp('updated_at'),
 	enabled: boolean('enabled'),
 	deleted: boolean('deleted'),
-	idEvent: serial('id_event').references(() => event.id),
+	idEvent: serial('id_event').references(() => events.id),
 });
+
+export const ticketRelations = relations(ticket, ({ one }) => ({
+	event: one(events, { fields: [ticket.idEvent], references: [events.id], }),
+}));
