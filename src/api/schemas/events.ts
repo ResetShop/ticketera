@@ -3,7 +3,7 @@ import { boolean, integer, pgTable, serial, text, timestamp } from 'drizzle-orm/
 // Schemas
 import { user } from './user'
 
-export const event = pgTable('event', {
+export const events = pgTable('event', {
     id: serial('id').primaryKey(),
     name: text('name').notNull(),
     description: text('description').notNull(),
