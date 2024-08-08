@@ -1,0 +1,1 @@
+ALTER TABLE "ticket" ADD COLUMN "id_event" serial NOT NULL;
