@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS "event" (
 	"start_date" timestamp NOT NULL,
 	"end_date" timestamp NOT NULL,
 	"alt_organizer" text,
-	"imageUrl" text,
+	"image_url" text,
 	"people_limit" integer NOT NULL,
 	"venue_name" text NOT NULL,
 	"venue_address" text NOT NULL,
