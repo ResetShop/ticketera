@@ -29,6 +29,7 @@ const environmentFileContent = `
        redirectUri: "${process.env['AUTH0_REDIRECT_URI']}",
        domain: "${process.env['AUTH0_DOMAIN']}",
        clientId: "${process.env['AUTH0_CLIENT_ID']}",
+       selectedEventId: ${process.env['SELECTED_EVENT_ID']},
     };
 `;
 
