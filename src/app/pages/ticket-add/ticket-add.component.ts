@@ -1,13 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TicketService } from 'src/app/providers/ticket.service';
 import { Ticket } from 'src/app/interfaces/ticket.model';
 import { Router } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { first } from 'rxjs'
-import { UserService } from '../../providers/user.service'
+import { first, switchMap } from 'rxjs'
+
+// Providers
 import { AuthenticationService } from '../../providers/authentication.service'
+import { EventService } from '../../providers/event.service'
+import { TicketService } from 'src/app/providers/ticket.service';
 
 @Component({
 	selector: 'ticketera-ticket-add',
@@ -108,6 +109,7 @@ export class TicketAddComponent implements OnInit {
 
 	private formBuilder = inject(FormBuilder);
 	private router = inject(Router);
+	private eventService = inject(EventService);
 	private ticketService = inject(TicketService);
 	private authenticationService = inject(AuthenticationService);
 
@@ -126,30 +128,40 @@ export class TicketAddComponent implements OnInit {
 
 			const user = this.authenticationService.currentUser$.value ?? null;
 
-			console.log(user);
-
 			if(!user){
 				console.error('Usuario no encontrado');
 				return;
 			}
 
-			const tk: Ticket = {
-				firstName: this.ticketForm.value.firstName,
-				lastName: this.ticketForm.value.lastName,
-				dni: this.ticketForm.value.dni,
-				phone: this.ticketForm.value.phone,
-				cost: 1800,
-				createdBy: user.id,
-				id: 0,
-				qrString: '',
-				email: '',
-				createdAt: '',
-				updatedAt: '',
-				enabled: false,
-				deleted: false
-			}
+			const selectedEvent$ = this.eventService.selectedEvent$.asObservable()
 
-			this.ticketService.createTicket(tk).pipe(first()).subscribe({
+			selectedEvent$.pipe(
+				switchMap(event => {
+
+					if(!event){
+						throw new Error('Evento no encontrado');
+					}
+
+					const ticket: Ticket = {
+						firstName: this.ticketForm.value.firstName,
+						lastName: this.ticketForm.value.lastName,
+						dni: this.ticketForm.value.dni,
+						phone: this.ticketForm.value.phone,
+						cost: 1800,
+						createdBy: user.id,
+						id: 0,
+						qrString: '',
+						email: '',
+						createdAt: '',
+						updatedAt: '',
+						enabled: false,
+						deleted: false,
+						event: event
+					}
+
+					return this.ticketService.createTicket(ticket).pipe(first())
+				})
+			).subscribe({
 				next: (response) => {
 					this.isLoading = false;
 					const createdTicketID = response.id;

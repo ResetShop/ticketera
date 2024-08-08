@@ -1,4 +1,7 @@
-export interface Ticket{
+// Models
+import { Event } from './event.model';
+
+export interface Ticket {
     id: number,
     cost: number,
     firstName: string,
@@ -11,5 +14,6 @@ export interface Ticket{
     createdAt: string,
     updatedAt: string,
     enabled: boolean,
-    deleted: boolean
+    deleted: boolean,
+    event: Event
 }
