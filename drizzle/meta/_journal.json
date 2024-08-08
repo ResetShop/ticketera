@@ -43,6 +43,13 @@
       "when": 1723120766128,
       "tag": "0005_lazy_gambit",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1723120890983,
+      "tag": "0006_fantastic_dragon_man",
+      "breakpoints": true
     }
   ]
 }
