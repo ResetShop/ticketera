@@ -1,5 +1,5 @@
 {
-  "id": "9dd2210d-908c-4134-bc00-d2189495d415",
+  "id": "16b03196-1f1a-47d2-8950-02b76ad3ab55",
   "prevId": "af0f9bde-08cc-477a-922e-eccbe52131c6",
   "version": "5",
   "dialect": "pg",
@@ -68,12 +68,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "created_by": {
-          "name": "created_by",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -104,21 +98,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "event_created_by_user_id_fk": {
-          "name": "event_created_by_user_id_fk",
-          "tableFrom": "event",
-          "tableTo": "user",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -281,12 +261,6 @@
           "type": "boolean",
           "primaryKey": false,
           "notNull": false
-        },
-        "id_event": {
-          "name": "id_event",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
         }
       },
       "indexes": {},
@@ -297,19 +271,6 @@
           "tableTo": "seller",
           "columnsFrom": [
             "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "ticket_id_event_event_id_fk": {
-          "name": "ticket_id_event_event_id_fk",
-          "tableFrom": "ticket",
-          "tableTo": "event",
-          "columnsFrom": [
-            "id_event"
           ],
           "columnsTo": [
             "id"

@@ -40,15 +40,8 @@
     {
       "idx": 5,
       "version": "5",
-      "when": 1722944114095,
-      "tag": "0005_cheerful_major_mapleleaf",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1722944404884,
-      "tag": "0006_charming_tigra",
+      "when": 1723120766128,
+      "tag": "0005_lazy_gambit",
       "breakpoints": true
     }
   ]
