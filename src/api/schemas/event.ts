@@ -10,7 +10,7 @@ export const event = pgTable('event', {
     startDate: timestamp('start_date').notNull(),
     endDate: timestamp('end_date').notNull(),
     altOrganizer: text('alt_organizer'),
-    imageUrl: text('imageUrl'),
+    imageUrl: text('image_url'),
     peopleLimit: integer('people_limit').notNull(),
     venueName: text('venue_name').notNull(),
     venueAddress: text('venue_address').notNull(),
