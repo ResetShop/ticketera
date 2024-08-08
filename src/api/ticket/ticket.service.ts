@@ -18,9 +18,7 @@ export async function getAll() {
     return db.query.ticket.findMany();
 }
 
-export async function create({ cost, firstName, lastName, email, phone, dni, createdBy }: any) {
-    console.log({ cost, firstName, lastName, email, phone, dni, createdBy });
-
+export async function create({ cost, firstName, lastName, email, phone, dni, createdBy, event }: any) {
     const seller = await sellerService.getByUserId(createdBy);
 
     const newTicket = {
@@ -35,7 +33,8 @@ export async function create({ cost, firstName, lastName, email, phone, dni, cre
         updatedAt: new Date(),
         enabled: false,
         deleted: false,
-        createdBy: seller?.id ?? 0
+        createdBy: seller?.id ?? 0,
+        idEvent: event.id
     }
 
     const res = await db.insert(schemas.ticket).values(newTicket).returning();
