@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { authorizedGuard } from './guards/authorized.guard';
+import { appResolver } from './app.resolver'
 
 export const ROUTE_TREE = {
 	DASHBOARD: 'dashboard',
@@ -19,6 +20,7 @@ export const appRoutes: Routes = [
 	},
 	{
 		path: '',
+		resolve: { event: appResolver },
 		children: [
 			{
 				path: ROUTE_TREE.DASHBOARD,

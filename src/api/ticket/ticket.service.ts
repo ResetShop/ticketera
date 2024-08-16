@@ -1,26 +1,26 @@
-import * as schemas from '../schemas/ticket';
+import * as ticketSchemas from '../schemas/ticket';
+import * as eventSchemas from '../schemas/events';
 import * as sellerService from '../seller/seller.service';
+
 import { pgClient } from '../_helpers/postgres-connector'
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { eq } from 'drizzle-orm'
 
-const db = drizzle(pgClient, { schema: { ...schemas } });
+const db = drizzle(pgClient, { schema: { ...eventSchemas, ...ticketSchemas } });
 
 export async function getById(id: number) {
-    return db.query.ticket.findFirst({ where: eq(schemas.ticket.id, id) })
+    return db.query.ticket.findFirst({ with: { event: true }, where: eq(ticketSchemas.ticket.id, id) })
 }
 
 export async function getByUUID(uuid: string) {
-    return db.query.ticket.findFirst({ where: eq(schemas.ticket.qrString, uuid) })
+    return db.query.ticket.findFirst({ with: { event: true }, where: eq(ticketSchemas.ticket.qrString, uuid) })
 }
 
 export async function getAll() {
-    return db.query.ticket.findMany();
+    return db.query.ticket.findMany({ with: { event: true } });
 }
 
-export async function create({ cost, firstName, lastName, email, phone, dni, createdBy }: any) {
-    console.log({ cost, firstName, lastName, email, phone, dni, createdBy });
-
+export async function create({ cost, firstName, lastName, email, phone, dni, createdBy, event }: any) {
     const seller = await sellerService.getByUserId(createdBy);
 
     const newTicket = {
@@ -35,10 +35,11 @@ export async function create({ cost, firstName, lastName, email, phone, dni, cre
         updatedAt: new Date(),
         enabled: false,
         deleted: false,
-        createdBy: seller?.id ?? 0
+        createdBy: seller?.id ?? 0,
+        idEvent: event.id
     }
 
-    const res = await db.insert(schemas.ticket).values(newTicket).returning();
+    const res = await db.insert(ticketSchemas.ticket).values(newTicket).returning();
     return res;
 }
 
@@ -60,9 +61,9 @@ export async function redeem(uuid: string) {
 
     const result =
         await db
-            .update(schemas.ticket)
+            .update(ticketSchemas.ticket)
             .set(updatedTicket)
-            .where(eq(schemas.ticket.id, ticket.id))
+            .where(eq(ticketSchemas.ticket.id, ticket.id))
             .returning();
     return result;
 }
