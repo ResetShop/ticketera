@@ -8,12 +8,14 @@ import { environment } from '../environments/environment'
   providedIn: 'root'
 })
 export class EventService {
+  private readonly prefix = `${environment.redirectUri}api/event`;
+
   selectedEvent$ = new BehaviorSubject<Event | null>(null);
 
   http = inject(HttpClient);
 
   getById(id: number): Observable<Event> {
-    return this.http.get<Event>(`${environment.redirectUri}/api/event/${id}`);
+    return this.http.get<Event>(`${this.prefix}/${id}`);
   }
 
   // Asigna un evento por defecto para la aplicación
