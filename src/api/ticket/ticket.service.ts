@@ -16,8 +16,12 @@ export async function getByUUID(uuid: string) {
     return db.query.ticket.findFirst({ with: { event: true }, where: eq(ticketSchemas.ticket.qrString, uuid) })
 }
 
-export async function getAll() {
-    return db.query.ticket.findMany({ with: { event: true } });
+/**
+ * Obtiene todos los tickets del evento activl actual
+ * @param idEvent
+ */
+export async function getAll(idEvent: number) {
+    return db.query.ticket.findMany({ with: { event: true }, where: eq(ticketSchemas.ticket.idEvent, idEvent) });
 }
 
 export async function create({ cost, firstName, lastName, email, phone, dni, createdBy, event }: any) {
