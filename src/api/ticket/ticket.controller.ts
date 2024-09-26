@@ -33,7 +33,14 @@ function getByUUID(req: Request, res: Response, next: NextFunction) {
 }
 
 function getAll(req: Request, res: Response, next: NextFunction) {
-    ticketService.getAll()
+    const idEvent = req.query['idEvent'] as string;
+    console.log(idEvent);
+    if(!idEvent){
+        res.status(400).send('idEvent is required');
+        return
+    }
+
+    ticketService.getAll(parseInt(idEvent))
         .then((tickets) => res.status(200).json(tickets))
         .catch((err) => next(err))
 }

@@ -10,7 +10,7 @@ import { environment } from '../environments/environment'
 })
 export class TicketService {
 	private http = inject(HttpClient);
-	private readonly prefix = `/api/ticket`;
+	private readonly prefix = `${environment.redirectUri}api/ticket`;
 
 	getTicketByID(id: number): Observable<Ticket> {
 		return this.http.get<Ticket>(`${this.prefix}/${id}`);
@@ -20,8 +20,8 @@ export class TicketService {
 		return this.http.get<Ticket>(`${this.prefix}/uuid/${uuid}`);
 	}
 
-	getAllTickets(): Observable<Ticket[]> {
-		return this.http.get<Ticket[]>(`${this.prefix}`);
+	getAllTickets(idEvent: number): Observable<Ticket[]> {
+		return this.http.get<Ticket[]>(`${this.prefix}?idEvent=${idEvent}`);
 	}
 
 	createTicket(ticket: Ticket): Observable<Ticket> {

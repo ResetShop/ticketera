@@ -1,9 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TicketService } from '../../providers/ticket.service'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { RouterLink } from '@angular/router'
 import { ROUTE_TREE } from '../../app.routes'
+import { switchMap } from 'rxjs';
+
+// Services
+import { EventService } from '../../providers/event.service';
+import { TicketService } from '../../providers/ticket.service'
 
 @Component({
 	selector: 'ticketera-dashboard',
@@ -60,6 +64,9 @@ export class DashboardComponent {
 
 	appRoute = ROUTE_TREE;
 
+	private eventService = inject(EventService);
 	private ticketService = inject(TicketService);
-	tickets$ = this.ticketService.getAllTickets().pipe(takeUntilDestroyed());
+	tickets$ = this.eventService.selectedEvent$.asObservable().pipe(
+		switchMap((event) => this.ticketService.getAllTickets(event!.id)),
+		takeUntilDestroyed());
 }
