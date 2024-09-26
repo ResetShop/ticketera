@@ -49,4 +49,5 @@ writeFile(targetPath, environmentFileContent, { flag: 'w' }, function (err: Errn
     console.log('-------- | Domain      : ', process.env['AUTH0_DOMAIN']);
     console.log('-------- | Redirect URI: ', process.env['AUTH0_REDIRECT_URI']);
     console.log('-------- | Client ID   : ', process.env['AUTH0_CLIENT_ID']);
+    console.log('-------- | Evento Activo ID   : ', process.env['SELECTED_EVENT_ID']);
 });
