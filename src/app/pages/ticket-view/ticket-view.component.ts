@@ -14,18 +14,18 @@ import { QRCodeModule } from 'angularx-qrcode';
 	template: `
   @if(ticket$ | async; as ticket){
 	<div #ticket>
-		<div class="m-5 grid rounded bg-gualicho-red text-white p-5 text-center drop-shadow">
-			<img class="w-[300px] mx-auto" src="/assets/img/logo-gualicho.png" alt="">
+		<div class="m-5 grid rounded bg-primary-dark text-white p-5 text-center drop-shadow">
+			<img class="w-[300px] mx-auto" src="/assets/img/evento-privado.png" alt="">
 			<hr class="my-4">
 			<div class="flex justify-between">
-				<p class="font-bold text-xl">GUALICHO FEST</p>
+				<p class="font-bold text-xl">EVENTO PRIVADO</p>
 				<span class="whitespace-nowrap rounded-full bg-gray-100 px-2.5 py-0.5 text-sm text-gray-700">
 			Entrada #{{ ticket?.id }}
 			</span>
 			</div>
 			<div class="grid grid-cols-2 mt-5">
-				<div class="text-left">18/05/2024 <br> 23:59</div>
-				<div class="text-right"><span class="font-bold">Casa Grande</span><br>Belgrano 3298, Santa Fe</div>
+				<div class="text-left">28/09/2024 <br> 23:59</div>
+				<div class="text-right"><span class="font-bold">Cabañas Motivos</span><br>C. 92, Arroyo Leyes</div>
 			</div>
 			<img class="mx-auto rounded drop-shadow" [src]="ticket.qrUrl" alt="">
 			<!--

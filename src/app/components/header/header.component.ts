@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
 		<a [routerLink]="['']" >
 			<header class="bg-primary-dark">
 				<div class="mx-5 max-w-screen-lg px-4 py-4 sm:px-6 sm:py-8 md:max-w-screen-lg lg:px-8">
-					<h1 class="text-2xl font-bold text-white">GUALICHO TICKETS</h1>
+					<h1 class="text-2xl font-bold text-white">TICKETERA RESET</h1>
 				</div>
 			</header>
 		</a>
