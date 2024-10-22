@@ -4,53 +4,78 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { RouterLink } from '@angular/router'
 import { ROUTE_TREE } from '../../app.routes'
 import { switchMap } from 'rxjs';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 // Services
 import { EventService } from '../../providers/event.service';
 import { TicketService } from '../../providers/ticket.service'
+import { Ticket } from 'src/app/interfaces/ticket.model';
 
 @Component({
 	selector: 'ticketera-dashboard',
 	standalone: true,
-	imports: [ CommonModule, RouterLink ],
+	imports: [ CommonModule, RouterLink, ReactiveFormsModule ],
 	template: `
 		<a [routerLink]="['..', appRoute.TICKET_REDEEM]">
 			<button
 				class="bg-success hover:bg-success-dark mx-auto rounded-full px-4 py-2 font-bold text-white shadow-lg flex"
 			>CANJEAR ENTRADAS</button>
 		</a>
+
+		<input
+			class="m-4 p-2 border border-gray-300 rounded"
+			type="text"
+			placeholder="Buscar por nombre..."
+			[formControl]="searchControl"
+		/>
+
 		@if(tickets$ | async; as tickets){
-		<div class="m-5 grid rounded bg-white p-5 text-center drop-shadow">
-			<span class="text-5xl font-bold text-success">{{ tickets.length }}</span>
-			<span class="text-m font-bold">ENTRADAS VENDIDAS</span>
-		</div>
+			<div class="m-5 grid rounded bg-white p-5 text-center drop-shadow">
+				<span class="text-5xl font-bold text-success">{{ tickets.length }}</span>
+				<span class="text-m font-bold">ENTRADAS VENDIDAS</span>
+			</div>
 
-		<div class="overflow-x-auto">
-			<table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-				<thead class="ltr:text-left rtl:text-right">
-					<tr>
-						<th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">#</th>
-						<th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Nombre</th>
-						<th class="px-4 py-2"></th>
-					</tr>
-				</thead>
+			@if(filteredTickets.length > 0){
 
-				<tbody class="divide-y divide-gray-200">
-				
+				<div class="overflow-x-auto">
+					<table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+						<thead class="ltr:text-left rtl:text-right">
+							<tr>
+								<th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">#</th>
+								<th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Nombre</th>
+								<th class="px-4 py-2"></th>
+							</tr>
+						</thead>
 
-					<tr *ngFor="let ticket of tickets">
-						<td class="whitespace-nowrap px-4 py-5 font-medium text-gray-900">#{{ ticket.id }}</td>
-						<td class="whitespace-nowrap px-4 py-5 text-gray-700">{{ ticket.lastName }}, {{ ticket.firstName }}</td>
-						<td class="flex justify-between whitespace-nowrap px-4 py-5 min-w-[100px]">
-							<a [routerLink]="['..', appRoute.TICKET_DETAIL, ticket.id]"><img class="h-5" src="/assets/img/icons/qr-code.svg" alt=""/></a>
-							<a [routerLink]="['..', appRoute.TICKET_VIEW, ticket.qrString]"><img class="h-5" src="/assets/img/icons/ticket.svg" alt=""/></a>
-							<img class="h-5" src="/assets/img/icons/whatsapp.svg" alt="" />
-						</td>
-					</tr>
+						<tbody class="divide-y divide-gray-200">
+						
 
-				</tbody>
-			</table>
-		</div>
+							<tr *ngFor="let ticket of pagedTickets">
+								<td class="whitespace-nowrap px-4 py-5 font-medium text-gray-900">#{{ ticket.id }}</td>
+								<td class="whitespace-nowrap px-4 py-5 text-gray-700">{{ ticket.lastName }}, {{ ticket.firstName }}</td>
+								<td class="flex justify-between whitespace-nowrap px-4 py-5 min-w-[100px]">
+									<a [routerLink]="['..', appRoute.TICKET_DETAIL, ticket.id]"><img class="h-5" src="/assets/img/icons/qr-code.svg" alt=""/></a>
+									<a [routerLink]="['..', appRoute.TICKET_VIEW, ticket.qrString]"><img class="h-5" src="/assets/img/icons/ticket.svg" alt=""/></a>
+									<img class="h-5" src="/assets/img/icons/whatsapp.svg" alt="" />
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+
+					<div class="join flex justify-center mt-4">
+						<button class="join-item btn px-4 py-2 mx-2 border rounded"
+						[disabled]="currentPage === 1" 
+						(click)="prevPage()">«</button>
+						<button class="join-item btn px-4 py-2 mx-2 border rounded">Página {{currentPage}}</button>
+						<button class="join-item btn px-4 py-2 mx-2 border rounded"
+						[disabled]="currentPage === totalPages" 
+						(click)="nextPage()">»</button>
+					</div>
+				</div>
+			} @else {
+				<p class="text-center mt-4">No se encontraron entradas</p>
+			}
 		}
 		<a [routerLink]="['..', appRoute.TICKET_ADD]">
 			<button
@@ -69,4 +94,52 @@ export class DashboardComponent {
 	tickets$ = this.eventService.selectedEvent$.asObservable().pipe(
 		switchMap((event) => this.ticketService.getAllTickets(event!.id)),
 		takeUntilDestroyed());
+
+	searchControl = new FormControl('');
+	filteredTickets: Ticket[] = [];
+	pagedTickets: Ticket[] = [];
+	currentPage = 1;
+	pageSize = 10;
+	totalPages = 1;
+
+	ngOnInit() {
+		this.tickets$.subscribe((tickets) => {
+			this.filteredTickets = tickets;
+			this.updatePagination();
+		});
+
+		this.searchControl.valueChanges.subscribe((searchTerm) => {
+			this.filterTickets(searchTerm);
+		});
+	}
+
+	filterTickets(searchTerm: string | null) {
+		if (!searchTerm) {
+			this.filteredTickets = [...this.filteredTickets];
+		} else {
+			this.filteredTickets = this.filteredTickets.filter((ticket) =>
+				`${ticket.lastName} ${ticket.firstName}`.toLowerCase().includes(searchTerm.toLowerCase())
+			);
+		}
+		this.updatePagination();
+	}
+
+	updatePagination() {
+		this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
+		this.pagedTickets = this.filteredTickets.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);
+	}
+
+	nextPage() {
+		if (this.currentPage < this.totalPages) {
+			this.currentPage++;
+			this.updatePagination();
+		}
+	}
+
+	prevPage() {
+		if (this.currentPage > 1) {
+			this.currentPage--;
+			this.updatePagination();
+		}
+	}
 }
