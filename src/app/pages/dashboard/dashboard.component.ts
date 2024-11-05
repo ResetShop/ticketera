@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { RouterLink } from '@angular/router'
 import { ROUTE_TREE } from '../../app.routes'
 import { switchMap } from 'rxjs';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 // Services
 import { EventService } from '../../providers/event.service';
@@ -22,20 +22,13 @@ import { Ticket } from 'src/app/interfaces/ticket.model';
 			>CANJEAR ENTRADAS</button>
 		</a>
 
-		<input
-			class="m-4 p-2 border border-gray-300 rounded"
-			type="text"
-			placeholder="Buscar por nombre..."
-			[formControl]="searchControl"
-		/>
-
 		@if(tickets$ | async; as tickets){
 			<div class="m-5 grid rounded bg-white p-5 text-center drop-shadow">
-				<span class="text-5xl font-bold text-success">{{ tickets.length }}</span>
+				<span class="text-5xl font-bold text-success">{{ totalTickets }}</span>
 				<span class="text-m font-bold">ENTRADAS VENDIDAS</span>
 			</div>
 
-			@if(filteredTickets.length > 0){
+			@if(totalTickets > 0){
 
 				<div class="overflow-x-auto">
 					<table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
@@ -92,41 +85,25 @@ export class DashboardComponent {
 	private eventService = inject(EventService);
 	private ticketService = inject(TicketService);
 	tickets$ = this.eventService.selectedEvent$.asObservable().pipe(
-		switchMap((event) => this.ticketService.getAllTickets(event!.id)),
+		switchMap((event) => this.ticketService.getAllTickets(event!.id, this.currentPage, this.pageSize)),
 		takeUntilDestroyed());
 
-	searchControl = new FormControl('');
-	filteredTickets: Ticket[] = [];
 	pagedTickets: Ticket[] = [];
 	currentPage = 1;
 	pageSize = 10;
 	totalPages = 1;
+	totalTickets = 0;
 
 	ngOnInit() {
-		this.tickets$.subscribe((tickets) => {
-			this.filteredTickets = tickets;
+		this.tickets$.subscribe((response) => {
+			this.pagedTickets = response.tickets;
+			this.totalTickets = response.totalTickets;
 			this.updatePagination();
 		});
-
-		this.searchControl.valueChanges.subscribe((searchTerm) => {
-			this.filterTickets(searchTerm);
-		});
-	}
-
-	filterTickets(searchTerm: string | null) {
-		if (!searchTerm) {
-			this.filteredTickets = [...this.filteredTickets];
-		} else {
-			this.filteredTickets = this.filteredTickets.filter((ticket) =>
-				`${ticket.lastName} ${ticket.firstName}`.toLowerCase().includes(searchTerm.toLowerCase())
-			);
-		}
-		this.updatePagination();
 	}
 
 	updatePagination() {
-		this.totalPages = Math.ceil(this.filteredTickets.length / this.pageSize);
-		this.pagedTickets = this.filteredTickets.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);
+		this.totalPages = Math.ceil(this.totalTickets / this.pageSize);
 	}
 
 	nextPage() {
@@ -141,5 +118,11 @@ export class DashboardComponent {
 			this.currentPage--;
 			this.updatePagination();
 		}
+	}
+
+	updateTickets() {
+		this.tickets$ = this.eventService.selectedEvent$.asObservable().pipe(
+			switchMap((event) => this.ticketService.getAllTickets(event!.id, this.currentPage, this.pageSize)),
+			takeUntilDestroyed());
 	}
 }

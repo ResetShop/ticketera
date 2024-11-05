@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import * as ticketService from './ticket.service'
+import { tick } from '@angular/core/testing'
 
 const router = Router()
 
@@ -34,15 +35,22 @@ function getByUUID(req: Request, res: Response, next: NextFunction) {
 
 function getAll(req: Request, res: Response, next: NextFunction) {
     const idEvent = req.query['idEvent'] as string;
+    const page = parseInt(req.query['page'] as string) || 1;
+    const pageSize = parseInt(req.query['pageSize'] as string) || 10;
     console.log(idEvent);
     if(!idEvent){
         res.status(400).send('idEvent is required');
         return
     }
 
-    ticketService.getAll(parseInt(idEvent))
-        .then((tickets) => res.status(200).json(tickets))
-        .catch((err) => next(err))
+    Promise.all([
+        ticketService.getAll(parseInt(idEvent), page, pageSize),
+        ticketService.countTickets(parseInt(idEvent))
+    ])
+    .then(([tickets, totalTickets]) => {
+        res.status(200).json({ tickets, totalTickets });
+    })
+    .catch((err) => next(err));
 }
 
 function create(req: Request, res: Response, next: NextFunction) {

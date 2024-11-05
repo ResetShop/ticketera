@@ -20,8 +20,8 @@ export class TicketService {
 		return this.http.get<Ticket>(`${this.prefix}/uuid/${uuid}`);
 	}
 
-	getAllTickets(idEvent: number): Observable<Ticket[]> {
-		return this.http.get<Ticket[]>(`${this.prefix}?idEvent=${idEvent}`);
+	getAllTickets(idEvent: number, page: number, pageSize: number): Observable<{ tickets: Ticket[], totalTickets: number }> {
+		return this.http.get<{ tickets: Ticket[], totalTickets: number }>(`${this.prefix}?idEvent=${idEvent}&page=${page}&pageSize=${pageSize}`);
 	}
 
 	createTicket(ticket: Ticket): Observable<Ticket> {

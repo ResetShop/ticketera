@@ -4,7 +4,7 @@ import * as sellerService from '../seller/seller.service';
 
 import { pgClient } from '../_helpers/postgres-connector'
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { eq } from 'drizzle-orm'
+import { eq, count } from 'drizzle-orm'
 
 const db = drizzle(pgClient, { schema: { ...eventSchemas, ...ticketSchemas } });
 
@@ -20,8 +20,21 @@ export async function getByUUID(uuid: string) {
  * Obtiene todos los tickets del evento activl actual
  * @param idEvent
  */
-export async function getAll(idEvent: number) {
-    return db.query.ticket.findMany({ with: { event: true }, where: eq(ticketSchemas.ticket.idEvent, idEvent) });
+export async function getAll(idEvent: number, page: number, pageSize: number) {
+    return db.query.ticket.findMany({
+        with: { event: true },
+        where: eq(ticketSchemas.ticket.idEvent, idEvent),
+        limit: pageSize,
+        offset: (page - 1) * pageSize
+    });
+}
+
+export async function countTickets(idEvent: number) {
+    return db.select({
+        count: count()
+    })
+    .from(ticketSchemas.ticket)
+    .where(eq(ticketSchemas.ticket.idEvent, idEvent));
 }
 
 export async function create({ cost, firstName, lastName, email, phone, dni, createdBy, event }: any) {
@@ -71,3 +84,4 @@ export async function redeem(uuid: string) {
             .returning();
     return result;
 }
+
