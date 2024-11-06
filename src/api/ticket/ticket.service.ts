@@ -17,11 +17,13 @@ export async function getByUUID(uuid: string) {
 }
 
 /**
- * Obtiene todos los tickets del evento activl actual
+ * Obtiene todos los tickets de un evento en base a su id
  * @param idEvent
+ * @param page
+ * @param pageSize
  */
-export async function getAll(idEvent: number) {
-    return db.query.ticket.findMany({ with: { event: true }, where: eq(ticketSchemas.ticket.idEvent, idEvent) });
+export async function getAll(idEvent: number, page: number = 1, pageSize: number = 10) {
+    return db.query.ticket.findMany({ with: { event: true }, where: eq(ticketSchemas.ticket.idEvent, idEvent), limit: pageSize, offset: (page - 1) * pageSize });
 }
 
 export async function create({ cost, firstName, lastName, email, phone, dni, createdBy, event }: any) {

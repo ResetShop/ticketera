@@ -34,13 +34,14 @@ function getByUUID(req: Request, res: Response, next: NextFunction) {
 
 function getAll(req: Request, res: Response, next: NextFunction) {
     const idEvent = req.query['idEvent'] as string;
-    console.log(idEvent);
+    const pageSize = req.query['pageSize'] as string;
+    const page = req.query['page'] as string;
     if(!idEvent){
         res.status(400).send('idEvent is required');
         return
     }
 
-    ticketService.getAll(parseInt(idEvent))
+    ticketService.getAll(parseInt(idEvent), parseInt(page), parseInt(pageSize))
         .then((tickets) => res.status(200).json(tickets))
         .catch((err) => next(err))
 }
